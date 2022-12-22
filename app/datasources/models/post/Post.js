@@ -5,7 +5,7 @@ const postSchema = new mongoose.Schema({
   content: { type: String, required: true },
   countLike: { type: Number, default: 0 },
   likePost: { type: mongoose.Schema.ObjectId, ref: 'Users' },
-  comment: [{ type: mongoose.Schema.ObjectId, ref: 'Comment' }],
+  comment: [{ type: mongoose.Schema.ObjectId, ref: 'Comments' }],
 }, { timestamps: true });
 
-module.exports = mongoose.model('Blog', postSchema);
+module.exports = mongoose.model('Posts', postSchema);

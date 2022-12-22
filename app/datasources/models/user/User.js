@@ -9,8 +9,8 @@ const UserSchema = new mongoose.Schema({
   flower: { type: [Schema.Types.ObjectId], ref: 'Users' },
   flowing: { type: [Schema.Types.ObjectId], ref: 'Users' },
   password: { type: String, required: true },
-  LikedPosts: { type: [Schema.Types.ObjectId], ref: 'Blog' },
-  posts: [{ type: Schema.Types.ObjectId, ref: 'Blog' }],
+  LikedPosts: { type: [Schema.Types.ObjectId], ref: 'Posts' },
+  posts: [{ type: Schema.Types.ObjectId, ref: 'Posts' }],
 }, { timestamps: true });
 
 module.exports = mongoose.model('Users', UserSchema);
