@@ -1,5 +1,5 @@
 const server = require('./server');
-const mongo = require('./mongo');
+const mongo = require('./mongodb');
 const redis = require('./redis');
 
 module.exports = {

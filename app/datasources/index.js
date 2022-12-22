@@ -6,6 +6,7 @@ const controllers = require('./controllers');
 const loaders = require('./loaders');
 
 if (config.nodeEnv !== 'test') {
+  mongoose.set('strictQuery', true);
   mongoose.connect(config.mongo.database, config.mongo.options, err => {
     if (err) {
       logger.info(`mongodb connection failed ${err}`);

@@ -4,7 +4,8 @@
   "description": "Medium Clone",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,13 +19,16 @@
   },
   "homepage": "https://github.com/ITRVN-Training/backend-graphql#readme",
   "dependencies": {
+    "@graphql-tools/schema": "^9.0.12",
     "apollo-server-express": "^2.24.0",
     "argon2": "^0.30.2",
     "dataloader": "^2.1.0",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "graphql": "^15.5.0",
     "lodash": "^4.17.21",
     "mongoose": "^6.8.1",
+    "nodemon": "^2.0.20",
     "redis": "^4.5.1",
     "winston": "^3.8.2"
   }
