@@ -54,13 +54,14 @@ async function Login(username, password, dataSources, res) {
 }
 
 async function DisableUser(id, dataSources, req) {
+  const { token } = req.cookies;
   const user = await User.findOne({ id }).lean();
   if (!user) {
     return new Error('user not found');
   }
 
-  const updatedUser = await User.findByIdAndUpdate(user._id, { status: 'Deactivated', id }, { new: true });
-  await dataSources.redis.del(`${updatedUser._id}`);
+  await User.findByIdAndUpdate(user._id, { status: 'Deactivated', id }, { new: true });
+  await dataSources.redis.del(`${token}:${user._id}`);
   return {
     isSuccess: true,
 

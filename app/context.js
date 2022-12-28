@@ -10,7 +10,7 @@ async function getScope(req) {
   console.log(token);
   if (!user || !token) { return null; }
 
-  const userRedis = await redis.get(`user:${user}`);
+  const userRedis = await redis.get(`${token}:${user}`);
   if (!userRedis) { return null; }
 
   const { status } = JSON.parse(userRedis);
