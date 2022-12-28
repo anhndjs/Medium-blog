@@ -1,5 +1,5 @@
-const user = require('./user/register');
-const follow = require('./follow/follow');
+const user = require('./user/userCommand');
+const follow = require('./follow/followCommand');
 const post = require('./post/postCommand');
 
 module.exports = {
