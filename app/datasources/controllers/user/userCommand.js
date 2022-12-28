@@ -56,14 +56,25 @@ async function Login(username, password, dataSources, res) {
   }
 }
 
-async function DisableUser(id) {
+async function DisableUser(id, dataSources, res) {
   const user = await User.findOne({ id }).lean();
-
   if (!user) {
     return new Error('user not found');
   }
 
-  await User.findByIdAndUpdate(user, { status: 'Deactivated', id });
+  const updatedUser = await User.findByIdAndUpdate(user._id, { status: 'Deactivated', id }, { new: true });
+  await dataSources.redis.set(
+    `user:${updatedUser._id}`,
+    JSON.stringify({
+      _id: updatedUser._id,
+      role: updatedUser.role,
+      status: updatedUser.status,
+    }),
+  );
+  return {
+    isSuccess: true,
+
+  };
 }
 module.exports = {
   register,

@@ -7,8 +7,8 @@ const mutationResolver = {
     const login = dataSources.user.Login(username, password, dataSources, res);
     return login;
   },
-  disableUser: (_, { id }, { dataSources }) => {
-    const user = dataSources.user.DisableUser(id);
+  disableUser: (_, { id }, { dataSources, res }) => {
+    const user = dataSources.user.DisableUser(id, dataSources, res);
     return user;
   },
   follow: (_, { followee }, { dataSources, authUser }) => {
