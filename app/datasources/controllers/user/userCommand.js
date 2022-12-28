@@ -61,7 +61,8 @@ async function DisableUser(id, dataSources, req) {
   }
 
   await User.findByIdAndUpdate(user._id, { status: 'Deactivated', id }, { new: true });
-  await dataSources.redis.del(`${token}:${user._id}`);
+  await dataSources.redis.del(`${token}:${id}`);
+
   return {
     isSuccess: true,
 
