@@ -2,7 +2,7 @@ const { Follow } = require('../../models');
 
 async function follower(followee, authUser) {
   const { _id } = JSON.parse(authUser);
-  const user = await Follow.findOne({ followee, follower: _id });
+  const user = await Follow.findOne({ followee, follower: _id }).lean();
 
   if (user) {
     throw new Error('you has been follow');
@@ -16,8 +16,7 @@ async function follower(followee, authUser) {
 
 async function unfollow(followee, authUser) {
   const { _id } = JSON.parse(authUser);
-  const user = await Follow.findOne({ followee, follower: _id });
-  console.log(user);
+  const user = await Follow.findOne({ followee, follower: _id }).lean();
   if (user) {
     await Follow.findOneAndDelete({ followee });
   }
