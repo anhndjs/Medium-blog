@@ -7,6 +7,7 @@ async function createContext({ req, res }) {
 
 async function getScope(req) {
   const { user, token } = req.cookies;
+  console.log(token);
   if (!user || !token) { return null; }
 
   const userRedis = await redis.get(`user:${user}`);
