@@ -24,6 +24,10 @@ const mutationResolver = {
     const createPost = dataSources.post.createPost(title, content, status, authUser);
     return createPost;
   },
+  updatePost: (_, args, { dataSources, authUser }, info) => {
+    const updatePost = dataSources.post.updatePost(args, authUser, info);
+    return updatePost;
+  },
 };
 
 module.exports = mutationResolver;

@@ -1,3 +1,4 @@
+const { parse } = require('graphql');
 const { redis } = require('./datasources/utils/redis/stores');
 
 async function createContext({ req, res }) {
@@ -16,6 +17,9 @@ async function getScope(req) {
   if (status !== 'Active') {
     throw new Error('you cannot authorized');
   }
+  const { query } = req.body;
+  const ast = parse(`${query}`);
+  // console.log(ast.definitions[0].selectionSet.selections[0]);
 
   return userRedis;
 }
