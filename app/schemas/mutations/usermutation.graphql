@@ -1,5 +1,0 @@
-  type Mutation {
-  SignUp(email: String!, password: String!, lastName: String!): User
-  Login(email: String!, password: String!): User
-  UpdatePassWork(password: String!): User
-}

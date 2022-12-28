@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const config = require('../config');
-
+const { redis } = require('./utils/redis/stores');
 require('./models');
 const controllers = require('./controllers');
 const loaders = require('./loaders');
@@ -16,4 +16,4 @@ if (config.nodeEnv !== 'test') {
   });
 }
 
-module.exports = () => ({ ...controllers, loaders });
+module.exports = () => ({ ...controllers, loaders, redis });

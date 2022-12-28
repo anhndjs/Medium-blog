@@ -5,7 +5,6 @@ const config = require('./config');
 const server = app.listen(config.port, '0.0.0.0', () => {
   logger.info(`🚀 Running on port ${config.port}`);
 });
-
 process.on('uncaughtException', exception => {
   logger.warn(exception);
 });

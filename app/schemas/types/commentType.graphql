@@ -1,7 +1,0 @@
-  type Comment {
-    id: ID!
-    userId: User!
-    body: String!
-    postId: Post!
-    likeComment: Int
-}

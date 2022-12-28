@@ -5,5 +5,4 @@ const redis = require('./redis');
 module.exports = {
   ...server,
   ...mongo,
-  ...redis,
 };
