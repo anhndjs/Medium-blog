@@ -1,11 +1,10 @@
 type Query {
   me: User
   user(input: UserFilterInput): User # Admin only
-  users(name: String): [User]
+  users(username: String): [User]
 
   post(id: ID!): Post
   posts(input: PostFilterInput!): [Post]
 
   replies(input: ReplyFilterInput!): [Comment]
-  hello: User
 }

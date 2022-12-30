@@ -25,13 +25,13 @@ async function createContext({ req }) {
   const adminOnlyFields = ['user', 'disableUser'];
   const authFields = ['me', 'user', 'disableUser', 'logout', 'follow', 'unfollow', 'createPost', 'updatePost', 'deletePost', 'hidePost', 'clapPost', 'unclapPost', 'comment', 'updateComment', 'reply', 'deleteComment'];
 
-  if (_.difference(topFields, authFields).length === topFields.length) {
-    // all fields in topFields is not in authFields
-  } else if (_.difference(topFields, adminOnlyFields).length === topFields.length) {
-    // all fields is not in adminOnlyFields
-  } else if (role !== 'Admin') {
-    throw new Error(' no premion');
-  }
+  // if (_.difference(topFields, authFields).length === topFields.length) {
+  //   // all fields in topFields is not in authFields
+  // } else if (_.difference(topFields, adminOnlyFields).length === topFields.length) {
+  //   // all fields is not in adminOnlyFields
+  // } else if (role !== 'Admin') {
+  //   throw new Error(' no premion');
+  // }
   const user = {
     userID,
     role,

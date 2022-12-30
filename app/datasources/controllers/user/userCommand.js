@@ -24,13 +24,19 @@ async function Login(parent, args, context, info) {
   try {
     const user = await User.findOne({ username: args.username }).lean();
     if (!user) {
-      return new Error('not found user');
+      return {
+        isSuccess: false,
+        message: 'Invalid credentials',
+      };
     }
 
     const valid = await bcrypt.compare(args.password, user.password);
 
     if (!valid) {
-      return new Error('Invalid password');
+      return {
+        isSuccess: false,
+        message: 'Invalid credentials',
+      };
     }
 
     const createToken = await bcrypt.hash(`${user}`, 10);
