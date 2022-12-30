@@ -1,6 +1,6 @@
 const user = require('./user/userCommand');
 const follow = require('./follow/followCommand');
-const post = require('./post/postCommand');
+const post = require('./post');
 
 module.exports = {
   user,

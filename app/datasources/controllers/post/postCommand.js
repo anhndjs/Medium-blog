@@ -1,10 +1,15 @@
 const { Post } = require('../../models');
 
-async function createPost(title, content, status, authUser) {
+async function createPost(args, context) {
   try {
-    const _id = JSON.parse(authUser);
-    const post = await Post.create({ title, content, status, owner: _id });
-    return post;
+    const { title, content, status } = args;
+    const { user } = context;
+    const post = await Post.create({ title, content, status, owner: user.userID });
+    return {
+      isSuccess: true,
+      message: 'create post success',
+      post,
+    };
   } catch (error) {
     throw new Error(error);
   }
@@ -12,13 +17,17 @@ async function createPost(title, content, status, authUser) {
 
 async function updatePost(args, authUser, info) {
   try {
-    console.log(info);
-    // const owner = await Post.populate('owner');
-    // console.log(owner);
     const _id = JSON.parse(authUser);
+
     const { id, title, content, status } = args.input;
+
     const updatePosts = await Post.findByIdAndUpdate(id, { title, content, status, owner: _id }, { new: true });
-    return updatePosts;
+
+    return {
+      isSuccess: true,
+      message: 'update success',
+      updatePosts,
+    };
   } catch (error) {
     throw new Error(error);
   }

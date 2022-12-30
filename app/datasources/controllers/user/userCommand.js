@@ -2,7 +2,7 @@ const { GraphQLError } = require('graphql');
 const bcrypt = require('bcrypt');
 const { User } = require('../../models');
 
-async function register(args) {
+async function register(parent, args, context, info) {
   try {
     const user = await User.findOne({ email: args.email }).lean();
     if (user) {
@@ -20,53 +20,60 @@ async function register(args) {
   }
 }
 
-async function Login(username, password, dataSources, res) {
+async function Login(parent, args, context, info) {
   try {
-    const user = await User.findOne({ username }).lean();
+    const user = await User.findOne({ username: args.username }).lean();
     if (!user) {
       return new Error('not found user');
     }
 
-    const valid = await bcrypt.compare(password, user.password);
+    const valid = await bcrypt.compare(args.password, user.password);
 
     if (!valid) {
       return new Error('Invalid password');
     }
 
     const createToken = await bcrypt.hash(`${user}`, 10);
-    await dataSources.redis.set(
+    await context.dataSources.redis.set(
       `${createToken}:${user._id}`,
       JSON.stringify({
         role: user.role,
       }),
     );
 
-    res.cookie('token', createToken);
-    res.cookie('user', user._id);
+    const token = `${createToken}: ${user._id}`;
     return {
       isSuccess: true,
       message: 'You are logged in',
-      token: createToken,
+      token,
     };
   } catch (error) {
     throw new Error(error);
   }
 }
 
-async function DisableUser(id, dataSources, req) {
-  const { token } = req.cookies;
-  const user = await User.findOne({ id }).lean();
-  if (!user) {
-    return new Error('user not found');
+async function DisableUser(parent, args, context, info) {
+  try {
+    const { id } = args;
+    const user = await User.findById(id).lean();
+
+    await User.findByIdAndUpdate(user._id, { status: 'Deactivated' }, { new: true });
+    let cursor = 0;
+
+    do {
+      const resultOfScan = await context.dataSources.redis.scan(cursor, 'MATCH', `*${id}`, 'COUNT', '1');
+      cursor = resultOfScan[0];
+      if (resultOfScan) {
+        await context.dataSources.redis.lPush(resultOfScan[1]);
+      }
+    } while (cursor !== '0');
+    console.log('went here!');
+    return {
+      isSuccess: true,
+    };
+  } catch (error) {
+    throw new Error(error);
   }
-
-  await User.findByIdAndUpdate(user._id, { status: 'Deactivated', id }, { new: true });
-  await dataSources.redis.del(`${token}:${id}`);
-
-  return {
-    isSuccess: true,
-
-  };
 }
 module.exports = {
   register,

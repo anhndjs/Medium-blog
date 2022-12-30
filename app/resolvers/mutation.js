@@ -1,27 +1,27 @@
 const mutationResolver = {
-  register: (_, { email, username, password }, { dataSources, authScope }) => {
-    const user = dataSources.user.register({ email, username, password, authScope });
+  register: (parent, args, context, info) => {
+    const user = context.dataSources.user.register(parent, args, context, info);
     return user;
   },
-  login: (_, { username, password }, { dataSources, res }) => {
-    const login = dataSources.user.Login(username, password, dataSources, res);
+  login: (parent, args, context, info) => {
+    const login = context.dataSources.user.Login(parent, args, context, info);
     return login;
   },
-  disableUser: (_, { id }, { dataSources, req }) => {
-    const user = dataSources.user.DisableUser(id, dataSources, req);
+  disableUser: (parent, args, context, info) => {
+    const user = context.dataSources.user.DisableUser(parent, args, context, info);
     return user;
   },
-  follow: (_, { followee }, { dataSources, authUser }) => {
-    const follows = dataSources.follow.follower(followee, authUser);
+  follow: (parent, args, context, info) => {
+    const follows = context.dataSources.follow.follower(args, context);
     return follows;
   },
-  unfollow: (_, { followee }, { dataSources, authUser }) => {
-    const unfollow = dataSources.follow.unfollow(followee, authUser);
+  unfollow: (parent, args, context, info) => {
+    const unfollow = context.dataSources.follow.unfollow(args, context);
     return unfollow;
   },
   // POST
-  createPost: (_, { title, content, status }, { dataSources, authUser }) => {
-    const createPost = dataSources.post.createPost(title, content, status, authUser);
+  createPost: (parent, args, context, info) => {
+    const createPost = context.dataSources.post.createPost(args, context);
     return createPost;
   },
   updatePost: (_, args, { dataSources, authUser }, info) => {

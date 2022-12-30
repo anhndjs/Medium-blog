@@ -1,26 +1,44 @@
 const { parse } = require('graphql');
+const _ = require('lodash');
 const { redis } = require('./datasources/utils/redis/stores');
-const { User } = require('./datasources/models');
+const { createLoader } = require('./loader');
 
-async function createContext({ req, res }) {
-  return { req, res, authUser: await getScope(req) };
-}
+async function createContext({ req }) {
+  const token = req.headers.authorization;
 
-async function getScope(req) {
-  const { user, token } = req.cookies;
-  if (!user || !token) { return null; }
-
-  const userRedis = await redis.get(`${token}:${user}`);
-  if (!userRedis) { return null; }
-  const { status } = User.findById({ user });
-
-  if (status !== 'Active') {
-    throw new Error('you cannot authorized');
+  if (!token) {
+    return null;
   }
+
+  const userID = token.split(':')[1];
+
+  const role = await redis.get(token);
+
   const { query } = req.body;
   const ast = parse(`${query}`);
-  // console.log(ast.definitions[0].selectionSet.selections[0]);
 
-  return userRedis;
+  const topFields = ast.definitions[0]
+    .selectionSet
+    .selections
+    .map(field => field.name.value);
+
+  const adminOnlyFields = ['user', 'disableUser'];
+  const authFields = ['me', 'user', 'disableUser', 'logout', 'follow', 'unfollow', 'createPost', 'updatePost', 'deletePost', 'hidePost', 'clapPost', 'unclapPost', 'comment', 'updateComment', 'reply', 'deleteComment'];
+
+  if (_.difference(topFields, authFields).length === topFields.length) {
+    // all fields in topFields is not in authFields
+  } else if (_.difference(topFields, adminOnlyFields).length === topFields.length) {
+    // all fields is not in adminOnlyFields
+  } else if (role !== 'Admin') {
+    throw new Error(' no premion');
+  }
+  const user = {
+    userID,
+    role,
+    token,
+    loader: createLoader(),
+  };
+  return { user };
 }
+
 module.exports = createContext;
