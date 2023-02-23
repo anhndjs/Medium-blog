@@ -1,56 +1,61 @@
 const grapqlFields = require('graphql-fields');
+const _ = require('lodash');
+const { throwError } = require('../../../utils');
 const logger = require('../../../utils/logger');
 const { User } = require('../../models');
+const { findOne } = require('../../models/comment');
+const { getSelectedFieldsWithoutRecursive } = require('../../utils/controllers');
 
-async function getMe(context) {
+async function getMe(parent, args, context, info) {
   try {
-    const { user } = context;
-    if (!user) {
-      return {
-        isSuccess: false,
-        message: 'Invalid credentials',
-      };
-    }
-    const me = await User.findById(user.userID).lean();
+    const { signature } = context;
+    const { id } = signature;
+    // take the requests of user
+    const fields = getSelectedFieldsWithoutRecursive(info.fieldNodes[0].selectionSet.selections);
 
-    return me;
-  } catch (error) {
-    logger.error('get me error', { error: error.stack });
-    throw error;
+    const user = await User.findOne({ id }).select(fields).lean();
+
+    return user;
+  } catch (err) {
+    logger.error(`${err.message}\n ${err.stack}`);
+    throwError('Internal server error');
   }
 }
 
-async function getuser(args, context, info) {
+async function getUser(parent, args, context, info) {
   try {
     const { input } = args;
-
-    const { _id, username, email } = input;
-
-    const selected = Object.keys(grapqlFields(info));
-
-    const getUser = await User.findOne({ _id, username, email }, selected).lean();
-
-    return getUser;
-  } catch (error) {
-    throw new Error(error);
+    const { id, username, email } = input;
+    const fields = Object.keys(grapqlFields(info));
+    const user = await User.findOne({
+      id,
+      username,
+      email,
+    }, { email: 1 }).select(fields).lean();
+    return user;
+  } catch (err) {
+    logger.error(`${err.message}\n ${err.stack}`);
+    throwError('Internal server error');
   }
 }
 
-async function getusers(args, info) {
+async function getUsers(parent, args, context, info) {
   try {
     const { username } = args;
-    console.log(username);
-    const selected = Object.keys(grapqlFields(info));
-    console.log(selected);
-    const user = await User.find({ username }, selected).lean();
-    console.log(user);
-  } catch (error) {
-    throw new Error(error);
+    const fields = Object.keys(grapqlFields(info));
+
+    const users = await User.find({
+      firstName: username,
+    }).select(fields).lean();
+    return users;
+  } catch (err) {
+    logger.error(`${err.message}\n ${err.stack}`);
+    throwError('Internal server error');
   }
 }
 
 module.exports = {
-  getuser,
+  getUser,
   getMe,
-  getusers,
+  getUsers,
 };

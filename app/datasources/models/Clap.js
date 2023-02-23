@@ -2,13 +2,13 @@ const mongoose = require('mongoose');
 
 const { ObjectId } = mongoose.Types;
 
-const Comment = new mongoose.Schema({
-  title: { type: String },
-  content: { type: String, required: true },
-
+const Clap = new mongoose.Schema({
   user: { type: ObjectId, required: true },
   post: { type: ObjectId, required: true },
-  parent: { type: ObjectId },
+  postOwner: { type: ObjectId, required: true },
+  comment: { type: ObjectId },
+
+  count: { type: Number },
 }, { timestamps: true });
 
-module.exports = mongoose.model('claps', Comment);
+module.exports = mongoose.model('clap', Clap);

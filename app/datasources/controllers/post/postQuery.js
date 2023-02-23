@@ -1,28 +1,39 @@
 const grapqlFields = require('graphql-fields');
 const { Post } = require('../../models');
+const { throwError } = require('../../../utils');
 
-async function Posts(args, context, info) {
+async function findPost(parent, args, context, info) {
   try {
-    const { input } = args;
-    const { owner, title, limit, offset } = input;
+    // find id of a post
+    const { id } = args;
 
-    const selected = Object.keys(grapqlFields(info));
-
-    const filter = {
-      title: new RegExp(title, 'i'),
-      status: 'Visible',
-    };
-    if (owner) filter.owner = owner;
-    const posts = await Post.find(filter, selected).skip(offset).limit(limit).lean();
-    return {
-      isSuccess: true,
-      posts,
-    };
-  } catch (error) {
-    throw new Error(error);
+    const fields = Object.keys(grapqlFields(info));
+    // return
+    const post = await Post.findOne({ id }).select(fields).lean();
+    return post;
+  } catch (err) {
+    logger.error(`${err.message}\n ${err.stack}`);
+    return throwError('Internal server error');
   }
 }
 
+async function findPosts(parent, args, context, info) {
+  const { input } = args;
+
+  const { owner, title, limit, offset } = input;
+
+  const fields = Object.keys(grapqlFields(info));
+
+  const posts = await Post.find({
+    owner,
+    title,
+    limit,
+    offset,
+  }).select(fields).lean();
+  return posts;
+}
+
 module.exports = {
-  Posts,
+  findPost,
+  findPosts,
 };

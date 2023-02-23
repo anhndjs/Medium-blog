@@ -1,10 +1,10 @@
 const mutationResolver = {
   register: (parent, args, context, info) => {
-    const user = context.dataSources.user.register(parent, args, context, info);
+    const user = context.dataSources.auth.register(parent, args, context, info);
     return user;
   },
   login: (parent, args, context, info) => {
-    const login = context.dataSources.user.Login(parent, args, context, info);
+    const login = context.dataSources.auth.login(parent, args, context, info);
     return login;
   },
   disableUser: (parent, args, context, info) => {
@@ -21,12 +21,36 @@ const mutationResolver = {
   },
   // POST
   createPost: (parent, args, context, info) => {
-    const createPost = context.dataSources.post.createPost(args, context);
+    const createPost = context.dataSources.post.createPost(parent, args, context, info);
     return createPost;
   },
-  updatePost: (_, args, { dataSources, authUser }, info) => {
-    const updatePost = dataSources.post.updatePost(args, authUser, info);
+  updatePost: (parent, args, context, info) => {
+    const updatePost = context.dataSources.post.updatePost(parent, args, context, info);
     return updatePost;
+  },
+  deletePost: (parent, args, context, info) => {
+    const deletePost = context.dataSources.post.deletePost(parent, args, context, info);
+    return deletePost;
+  },
+  hidePost: (parent, args, context, info) => {
+    const hidePost = context.dataSources.post.hidePost(parent, args, context, info);
+    return hidePost;
+  },
+  clapPost: (parent, args, context, info) => {
+    const clapPost = context.dataSources.Clap.clapPost(parent, args, context, info);
+    return clapPost;
+  },
+  unclapPost: (parent, args, context, info) => {
+    const unclapPost = context.dataSources.Clap.unclapPost(parent, args, context, info);
+    return unclapPost;
+  },
+  clapComment: (parent, args, context, info) => {
+    const unclapPost = context.dataSources.Clap.unclapPost(parent, args, context, info);
+    return unclapPost;
+  },
+  comment: (parent, args, context, info) => {
+    const comment = context.dataSources.comment.comment(parent, args, context, info);
+    return comment;
   },
 };
 

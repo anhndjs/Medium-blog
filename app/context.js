@@ -1,44 +1,37 @@
-const { parse } = require('graphql');
-const _ = require('lodash');
+const { gql } = require('apollo-server-express');
 const { redis } = require('./datasources/utils/redis/stores');
-const { createLoader } = require('./loader');
+const { scope, throwError, createLoaders } = require('./utils');
 
 async function createContext({ req }) {
-  const token = req.headers.authorization;
-
-  if (!token) {
-    return null;
-  }
-
-  const userID = token.split(':')[1];
-
-  const role = await redis.get(token);
-
   const { query } = req.body;
-  const ast = parse(`${query}`);
+  const queryAfterParse = gql(query);
 
-  const topFields = ast.definitions[0]
-    .selectionSet
-    .selections
-    .map(field => field.name.value);
-
-  const adminOnlyFields = ['user', 'disableUser'];
-  const authFields = ['me', 'user', 'disableUser', 'logout', 'follow', 'unfollow', 'createPost', 'updatePost', 'deletePost', 'hidePost', 'clapPost', 'unclapPost', 'comment', 'updateComment', 'reply', 'deleteComment'];
-
-  // if (_.difference(topFields, authFields).length === topFields.length) {
-  //   // all fields in topFields is not in authFields
-  // } else if (_.difference(topFields, adminOnlyFields).length === topFields.length) {
-  //   // all fields is not in adminOnlyFields
-  // } else if (role !== 'Admin') {
-  //   throw new Error(' no premion');
+  if (scope.guestScope.some(operation => operation === queryAfterParse.definitions[0]
+    .selectionSet.selections[0].name.value)) {
+    return { loaders: createLoaders() };
   }
-  const user = {
-    userID,
+
+  const token = req.headers.authorization;
+  const role = await redis.get(token);
+  if (!role) {
+    throwError('Unauthorized');
+  }
+
+  if (role === 'User') {
+    if (!scope.userScope.some(operation => operation === queryAfterParse.definitions[0]
+      .selectionSet.selections[0].name.value)) {
+      throwError('Unauthorized');
+    }
+  }
+
+  const userId = token.split(':')[1];
+
+  const signature = {
+    _id: userId,
     role,
     token,
-    loader: createLoader(),
   };
-  return { user };
+  return { signature, loaders: createLoaders() };
 }
 
 module.exports = createContext;

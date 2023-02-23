@@ -1,13 +1,16 @@
-const Comment = require('./comment/comment');
-const Post = require('./post/Post');
-const User = require('./user/User');
-const Follow = require('./follow/Follow');
+const Clap = require('./Clap');
+const Comment = require('./comment');
+const Post = require('./Post');
+const User = require('./User');
+const Follow = require('./Follow');
 
 const models = {
+  Clap,
   Comment,
   Post,
   User,
   Follow,
+
 };
 
 module.exports = models;
