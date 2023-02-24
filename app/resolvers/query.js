@@ -19,6 +19,10 @@ const queryResolver = {
     const post = context.dataSources.post.findPosts(parent, args, context, info);
     return post;
   },
+  replies: (parent, args, context, info) => {
+    const replies = context.dataSources.comment.replies(parent, args, context, info);
+    return replies;
+  },
 };
 
 module.exports = queryResolver;

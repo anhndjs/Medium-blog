@@ -69,12 +69,22 @@ async function clapComment(parent, args, context, info) {
     const clap = await Clap.findOne({
       user: signature._id,
       comment: commentId,
-    });
+    }).lean();
 
     if (!clap) {
-      await Clap.updateOne({ comment: commentId });
-      return createGeneralResponse(true, 'clapcomment true');
+      const newClap = new Clap({
+        user: signature._id,
+        comment: commentId,
+        count,
+      });
+      await newClap.save();
+      return createGeneralResponse(true, 'clap comment succedd');
     }
+    await Clap.updateOne({
+      user: signature._id,
+      comment: commentId,
+    }, { $inc: { count } });
+    return createGeneralResponse(true, 'clap comment succedd');
   } catch (err) {
     logger.error(`${err.message}\n ${err.stack}`);
     return throwError('Internal server error');

@@ -45,12 +45,24 @@ const mutationResolver = {
     return unclapPost;
   },
   clapComment: (parent, args, context, info) => {
-    const unclapPost = context.dataSources.Clap.unclapPost(parent, args, context, info);
+    const unclapPost = context.dataSources.Clap.clapComment(parent, args, context, info);
     return unclapPost;
   },
   comment: (parent, args, context, info) => {
     const comment = context.dataSources.comment.comment(parent, args, context, info);
     return comment;
+  },
+  updateComment: (parent, args, context, info) => {
+    const updateComment = context.dataSources.comment.updateComment(parent, args, context, info);
+    return updateComment;
+  },
+  reply: (parent, args, context, info) => {
+    const reply = context.dataSources.comment.reply(parent, args, context, info);
+    return reply;
+  },
+  deleteComment: (parent, args, context, info) => {
+    const deleteComment = context.dataSources.comment.deleteComment(parent, args, context, info);
+    return deleteComment;
   },
 };
 

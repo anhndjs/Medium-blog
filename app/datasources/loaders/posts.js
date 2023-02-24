@@ -3,7 +3,7 @@ const { User, Post, Clap } = require('../models');
 
 async function batchClapCountOfPost(ids) {
   try {
-    console.log(ids);
+    console.log(`cua clap count,${ids}`);
     const newIds = ids.map(id => mongoose.Types.ObjectId(id));
     const clapCount = await Clap.aggregate([
       {
@@ -29,7 +29,7 @@ async function batchClapCountOfPost(ids) {
 
 async function batchOwnerOfPost(ids) {
   try {
-    console.log(ids);
+    console.log(`cua clap count,${ids}`);
     const users = await User.find({
       _id: { $in: ids },
     }).lean();
