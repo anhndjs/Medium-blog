@@ -62,9 +62,11 @@ async function hidePost(parent, args, context, info) {
       _id,
       owner: signature._id,
     }, { status: 1 });
+
     if (!post || post.status === 'Deleted' || post.status === 'Hidden') {
       return createGeneralResponse(false, 'hide post failed');
     }
+    // Object.freeze(post);
     post.status = 'Hidden';
     await post.save();
     return createGeneralResponse(true, 'hide post succedd');

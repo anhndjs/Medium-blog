@@ -14,6 +14,7 @@ async function clapPost(parent, args, context, info) {
       return createGeneralResponse(false, 'Clap post failed');
     }
     const clap = await Clap.findOne({ user: signature._id, post: postId });
+
     if (!clap) {
       const newClap = new Clap({
         user: signature._id,
